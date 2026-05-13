@@ -5,8 +5,8 @@ function LandingPage() {
             <nav className="flex justify-between items-center px-10 py-5 border-b border-gray-800">
             <h1 className="text-2xl font-bold text-purple-500">DevCollab</h1>
             <div className="flex gap-4">
-                <button className="px-4 py-2 text-gray-300 hover:text-white">Login</button>
-                <button className="px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-700">Sign Up</button>
+                <button className="px-4 py-2 text-gray-300 hover:text-white cursor-pointer">Login</button>
+                <button className="px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-700 cursor-pointer">Sign Up</button>
             </div>
             </nav>
 
@@ -22,10 +22,10 @@ function LandingPage() {
                 chat in real time and review code — all in one place.
             </p>
             <div className="flex gap-4">
-                <button className="px-8 py-3 bg-purple-600 rounded-lg text-lg hover:bg-purple-700">
+                <button className="px-8 py-3 bg-purple-600 rounded-lg text-lg hover:bg-purple-700 cursor-pointer">
                 Get Started
                 </button>
-                <button className="px-8 py-3 border border-gray-600 rounded-lg text-lg hover:border-purple-500">
+                <button className="px-8 py-3 border border-gray-600 rounded-lg text-lg hover:border-purple-500 cursor-pointer">
                 Watch Demo
                 </button>
             </div>
