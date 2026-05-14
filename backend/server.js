@@ -13,6 +13,11 @@ app.use(express.json())
 const authRoutes = require('./routes/auth')
 app.use('/api/auth', authRoutes)
 
+//temp
+app.post('/test', (req, res) => {
+  res.json({ message: 'test works' })
+})
+
 connectDB()
 
 app.get('/', (req, res) => {
