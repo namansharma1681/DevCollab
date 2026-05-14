@@ -10,6 +10,9 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
+const authRoutes = require('./routes/auth')
+app.use('/api/auth', authRoutes)
+
 connectDB()
 
 app.get('/', (req, res) => {
