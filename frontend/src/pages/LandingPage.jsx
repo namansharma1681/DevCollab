@@ -56,6 +56,12 @@ function LandingPage() {
                 </div>
 
                 </div>
+
+                {/* remark of my self */}
+
+                <div className="text-center text-gray-600 text-sm py-8 mt-20 border-t border-gray-800">
+                    Built with 💜 by <span className="text-purple-500 font-medium">Naman Sharma</span>
+                </div>
         </div>
     )
 }
