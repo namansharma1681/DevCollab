@@ -1,7 +1,8 @@
-import { Link }  from 'react-router-dom'
+import { Link, useNavigate }  from 'react-router-dom'
 import { useState } from 'react'
 
 function LoginPage() {
+  const navigate = useNavigate()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -18,7 +19,17 @@ function LoginPage() {
 
       const data = await response.json()
       console.log(data)
-      alert(data.message)
+
+      if(data.token){
+        localStorage.setItem('token', data.token)
+        localStorage.setItem('user', JSON.stringify(data.user))
+        alert('Login Successful!')
+
+        navigate('/dashboard')
+      } else {
+        alert(data.message)
+      }
+      
 
     } catch(error) {
       console.log(error)
