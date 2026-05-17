@@ -28,4 +28,16 @@ router.post('/create', async (req, res) => {
   }
 });
 
+// GET API: Get all tasks for a user
+router.get('/get/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const tasks = await Task.find({ user: userId });
+    res.status(200).json(tasks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to get tasks' });
+  }
+});
+
 module.exports = router;
