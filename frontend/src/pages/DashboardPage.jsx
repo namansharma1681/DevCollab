@@ -1,10 +1,16 @@
 import { useNavigate } from 'react-router-dom'
 import {useState, useEffect} from 'react'
 
+
 function DashboardPage() {
   const navigate = useNavigate()
   const savedUserText = localStorage.getItem('user')
   const user = savedUserText ? JSON.parse(savedUserText) : null
+
+  //for adding the tasks form which we can fill and add tasks
+  const [showForm, setShowForm] = useState(false)
+  const [newTitle, setNewTitle] = useState('')
+  const [newDescription, setNewDescription] = useState('')
 
   const [tasks, setTasks] = useState([])
   const [loading, setLoading] = useState(true)
@@ -25,12 +31,37 @@ function DashboardPage() {
   fetchTasks()
 }, [])
 
-  // 3. Create a Logout function
+  // Create a Logout function
   const handleLogout = () => {
     localStorage.removeItem('token') // Throw away the ID badge
     localStorage.removeItem('user')  // Throw away the user data
     navigate('/login')               // Kick them back to the login page
   }
+
+  // creating function which will handle the created tasks
+  const handleCreateTask = async () => {
+  try {
+    const response = await fetch('http://localhost:5000/api/tasks/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        title: newTitle,
+        description: newDescription,
+        status: 'To Do',
+        userId: user.id
+      })
+    })
+    const data = await response.json()
+    setTasks([...tasks, data])
+    setShowForm(false)
+    setNewTitle('')
+    setNewDescription('')
+  } catch (error) {
+    console.log(error)
+  }
+}
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -63,6 +94,48 @@ function DashboardPage() {
     {/* To Do Column */}
     <div className="flex-1 bg-gray-900 rounded-xl p-4 border border-gray-800">
       <h3 className="text-lg font-bold mb-4 text-red-400">📋 To Do</h3>
+
+    {/*Added task button and make it function*/} 
+    <button
+      onClick={() => setShowForm(true)}
+      className="w-full py-2 border border-dashed border-gray-600 rounded-lg text-gray-400 hover:border-purple-500 hover:text-purple-500 cursor-pointer mb-3"
+    >
+      + Add Task
+    </button>
+
+    {showForm && (
+      <div className="bg-gray-800 p-4 rounded-lg mb-3 flex flex-col gap-2">
+        <input
+          type="text"
+          placeholder="Task title..."
+          value={newTitle}
+          onChange={(e) => setNewTitle(e.target.value)}
+          className="bg-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-purple-500 border border-gray-600"
+        />
+        <input
+          type="text"
+          placeholder="Description..."
+          value={newDescription}
+          onChange={(e) => setNewDescription(e.target.value)}
+          className="bg-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-purple-500 border border-gray-600"
+        />
+        <div className="flex gap-2">
+          <button
+            onClick={handleCreateTask}
+            className="flex-1 bg-purple-600 py-2 rounded-lg text-sm hover:bg-purple-700 cursor-pointer"
+          >
+            Create
+          </button>
+          <button
+            onClick={() => setShowForm(false)}
+            className="flex-1 bg-gray-700 py-2 rounded-lg text-sm hover:bg-gray-600 cursor-pointer"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    )}
+      
       <div className="flex flex-col gap-3">
         {tasks.filter(task => task.status === 'To Do').map(task => (
           <div key={task._id} className="bg-gray-800 p-4 rounded-lg border border-gray-700">
