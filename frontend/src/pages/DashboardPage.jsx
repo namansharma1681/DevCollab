@@ -1,11 +1,29 @@
 import { useNavigate } from 'react-router-dom'
+import {useState, useEffect} from 'react'
 
 function DashboardPage() {
   const navigate = useNavigate()
-
   const savedUserText = localStorage.getItem('user')
-  
   const user = savedUserText ? JSON.parse(savedUserText) : null
+
+  const [tasks, setTasks] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+  const fetchTasks = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/tasks/get/${user.id}`)
+      const data = await response.json()
+      setTasks(data)
+      setLoading(false)
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+    }
+  }
+
+  fetchTasks()
+}, [])
 
   // 3. Create a Logout function
   const handleLogout = () => {
@@ -37,9 +55,52 @@ function DashboardPage() {
       <div className="p-10">
         <h2 className="text-3xl font-bold mb-6">Your Workspace</h2>
         
-        <div className="p-10 border-2 border-dashed border-gray-800 rounded-xl text-center text-gray-500">
-          Task Board and Real-Time Chat coming soon...
-        </div>
+        {loading ? (
+  <div className="text-center text-gray-400 mt-20">Loading tasks...</div>
+) : (
+  <div className="flex gap-6">
+    
+    {/* To Do Column */}
+    <div className="flex-1 bg-gray-900 rounded-xl p-4 border border-gray-800">
+      <h3 className="text-lg font-bold mb-4 text-red-400">📋 To Do</h3>
+      <div className="flex flex-col gap-3">
+        {tasks.filter(task => task.status === 'To Do').map(task => (
+          <div key={task._id} className="bg-gray-800 p-4 rounded-lg border border-gray-700">
+            <h4 className="font-bold">{task.title}</h4>
+            <p className="text-gray-400 text-sm mt-1">{task.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* In Progress Column */}
+    <div className="flex-1 bg-gray-900 rounded-xl p-4 border border-gray-800">
+      <h3 className="text-lg font-bold mb-4 text-yellow-400">⚡ In Progress</h3>
+      <div className="flex flex-col gap-3">
+        {tasks.filter(task => task.status === 'In Progress').map(task => (
+          <div key={task._id} className="bg-gray-800 p-4 rounded-lg border border-gray-700">
+            <h4 className="font-bold">{task.title}</h4>
+            <p className="text-gray-400 text-sm mt-1">{task.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Done Column */}
+    <div className="flex-1 bg-gray-900 rounded-xl p-4 border border-gray-800">
+      <h3 className="text-lg font-bold mb-4 text-green-400">✅ Done</h3>
+      <div className="flex flex-col gap-3">
+        {tasks.filter(task => task.status === 'Done').map(task => (
+          <div key={task._id} className="bg-gray-800 p-4 rounded-lg border border-gray-700">
+            <h4 className="font-bold">{task.title}</h4>
+            <p className="text-gray-400 text-sm mt-1">{task.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+  </div>
+)}
       </div>
     </div>
   )
