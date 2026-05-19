@@ -40,4 +40,23 @@ router.get('/get/:userId', async (req, res) => {
   }
 });
 
+// PUT API: Update task status
+router.put('/update/:taskId', async (req, res) => {
+  try {
+    const { taskId } = req.params
+    const { status } = req.body
+
+    const updatedTask = await Task.findByIdAndUpdate(
+      taskId,
+      { status },
+      { new: true }
+    )
+
+    res.status(200).json(updatedTask)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: 'Failed to update task' })
+  }
+})
+
 module.exports = router;

@@ -63,6 +63,25 @@ function DashboardPage() {
   }
 }
 
+//for moving tasks from one status to another
+  const handleUpdateStatus = async (taskId, newStatus) => {
+  try {
+    const response = await fetch(`http://localhost:5000/api/tasks/update/${taskId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ status: newStatus })
+    })
+    const updatedTask = await response.json()
+    setTasks(tasks.map(task => 
+      task._id === taskId ? updatedTask : task
+    ))
+  } catch (error) {
+    console.log(error)
+  }
+}
+
   return (
     <div className="min-h-screen bg-gray-950 text-white">
       {/* Dashboard Navbar */}
@@ -141,6 +160,24 @@ function DashboardPage() {
           <div key={task._id} className="bg-gray-800 p-4 rounded-lg border border-gray-700">
             <h4 className="font-bold">{task.title}</h4>
             <p className="text-gray-400 text-sm mt-1">{task.description}</p>
+            <div className="flex gap-2 mt-3">
+              {task.status !== 'In Progress' && task.status !== 'Done' && (
+                <button
+                  onClick={() => handleUpdateStatus(task._id, 'In Progress')}
+                  className="text-xs px-2 py-1 bg-yellow-600 rounded cursor-pointer hover:bg-yellow-700"
+                >
+                  → In Progress
+                </button>
+              )}
+              {task.status !== 'Done' && (
+                <button
+                  onClick={() => handleUpdateStatus(task._id, 'Done')}
+                  className="text-xs px-2 py-1 bg-green-600 rounded cursor-pointer hover:bg-green-700"
+                >
+                  → Done
+                </button>
+              )}
+            </div>
           </div>
         ))}
       </div>
@@ -154,6 +191,24 @@ function DashboardPage() {
           <div key={task._id} className="bg-gray-800 p-4 rounded-lg border border-gray-700">
             <h4 className="font-bold">{task.title}</h4>
             <p className="text-gray-400 text-sm mt-1">{task.description}</p>
+            <div className="flex gap-2 mt-3">
+              {task.status !== 'In Progress' && task.status !== 'Done' && (
+                <button
+                  onClick={() => handleUpdateStatus(task._id, 'In Progress')}
+                  className="text-xs px-2 py-1 bg-yellow-600 rounded cursor-pointer hover:bg-yellow-700"
+                >
+                  → In Progress
+                </button>
+              )}
+              {task.status !== 'Done' && (
+                <button
+                  onClick={() => handleUpdateStatus(task._id, 'Done')}
+                  className="text-xs px-2 py-1 bg-green-600 rounded cursor-pointer hover:bg-green-700"
+                >
+                  → Done
+                </button>
+              )}
+            </div>
           </div>
         ))}
       </div>
@@ -167,6 +222,24 @@ function DashboardPage() {
           <div key={task._id} className="bg-gray-800 p-4 rounded-lg border border-gray-700">
             <h4 className="font-bold">{task.title}</h4>
             <p className="text-gray-400 text-sm mt-1">{task.description}</p>
+            <div className="flex gap-2 mt-3">
+              {task.status !== 'In Progress' && task.status !== 'Done' && (
+                <button
+                  onClick={() => handleUpdateStatus(task._id, 'In Progress')}
+                  className="text-xs px-2 py-1 bg-yellow-600 rounded cursor-pointer hover:bg-yellow-700"
+                >
+                  → In Progress
+                </button>
+              )}
+              {task.status !== 'Done' && (
+                <button
+                  onClick={() => handleUpdateStatus(task._id, 'Done')}
+                  className="text-xs px-2 py-1 bg-green-600 rounded cursor-pointer hover:bg-green-700"
+                >
+                  → Done
+                </button>
+              )}
+            </div>
           </div>
         ))}
       </div>
