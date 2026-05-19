@@ -59,4 +59,16 @@ router.put('/update/:taskId', async (req, res) => {
   }
 })
 
+  // DELETE API: Delete a task
+router.delete('/delete/:taskId', async (req, res) => {
+  try {
+    const { taskId } = req.params
+    await Task.findByIdAndDelete(taskId)
+    res.status(200).json({ message: 'Task deleted successfully' })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: 'Failed to delete task' })
+  }
+})
+
 module.exports = router;

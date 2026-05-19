@@ -82,6 +82,17 @@ function DashboardPage() {
   }
 }
 
+  const handleDeleteTask = async (taskId) => {
+  try {
+    await fetch(`http://localhost:5000/api/tasks/delete/${taskId}`, {
+      method: 'DELETE'
+    })
+    setTasks(tasks.filter(task => task._id !== taskId))
+  } catch (error) {
+    console.log(error)
+  }
+}
+
   return (
     <div className="min-h-screen bg-gray-950 text-white">
       {/* Dashboard Navbar */}
@@ -108,7 +119,7 @@ function DashboardPage() {
         {loading ? (
   <div className="text-center text-gray-400 mt-20">Loading tasks...</div>
 ) : (
-  <div className="flex gap-6">
+  <div className="flex gap-6 md:flex-row gap-6 items-start">
     
     {/* To Do Column */}
     <div className="flex-1 bg-gray-900 rounded-xl p-4 border border-gray-800">
@@ -177,6 +188,14 @@ function DashboardPage() {
                   → Done
                 </button>
               )}
+
+              <button
+                onClick={() => handleDeleteTask(task._id)}
+                className="text-xs px-2 py-1 bg-red-600 rounded cursor-pointer hover:bg-red-700"
+              >
+                🗑️ Delete
+              </button>
+
             </div>
           </div>
         ))}
@@ -208,6 +227,14 @@ function DashboardPage() {
                   → Done
                 </button>
               )}
+
+              <button
+                onClick={() => handleDeleteTask(task._id)}
+                className="text-xs px-2 py-1 bg-red-600 rounded cursor-pointer hover:bg-red-700"
+              >
+                🗑️ Delete
+              </button>
+
             </div>
           </div>
         ))}
@@ -239,6 +266,13 @@ function DashboardPage() {
                   → Done
                 </button>
               )}
+
+              <button
+                onClick={() => handleDeleteTask(task._id)}
+                className="text-xs px-2 py-1 bg-red-600 rounded cursor-pointer hover:bg-red-700"
+              >
+                🗑️ Delete
+              </button>
             </div>
           </div>
         ))}
