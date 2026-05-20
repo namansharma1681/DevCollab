@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
-import {useState, useEffect} from 'react'
+import {useState, useEffect, useRef} from 'react'
+import  {io} from 'socket.io-client'
 
 
 function DashboardPage() {
@@ -14,6 +15,11 @@ function DashboardPage() {
 
   const [tasks, setTasks] = useState([])
   const [loading, setLoading] = useState(true)
+
+  const [messages, setMessages] = useState([])
+  const [newMessage, setNewMessage] = useState('')
+  const socketRef = useRef(null)
+  const messagesEndRef = useRef(null)
 
   useEffect(() => {
   const fetchTasks = async () => {
@@ -30,6 +36,24 @@ function DashboardPage() {
 
   fetchTasks()
 }, [])
+
+{/* This id for socket.io it connect automatically when page loads............(useEffect means is to do something when page loads*/}
+useEffect(() => {
+  socketRef.current = io('http://localhost:5000')
+
+  socketRef.current.on('receiveMessage', (message) => {
+    setMessages((prev) => [...prev, message])
+  })
+
+  return () => {
+    socketRef.current.disconnect()
+  }
+}, [])
+
+{/* this is for auto scrolling to bottom whenever a new message arrive*/}
+useEffect(() => {
+  messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+}, [messages])
 
   // Create a Logout function
   const handleLogout = () => {
@@ -91,6 +115,19 @@ function DashboardPage() {
   } catch (error) {
     console.log(error)
   }
+}
+
+const handleSendMessage = () => {
+  if (!newMessage.trim()) return
+
+  const messageData = {
+    text: newMessage,
+    sender: user.name,
+    time: new Date().toLocaleTimeString()
+  }
+
+  socketRef.current.emit('sendMessage', messageData)
+  setNewMessage('')
 }
 
   return (
@@ -281,6 +318,46 @@ function DashboardPage() {
 
   </div>
 )}
+
+        {/* Chat Section */}
+<div className="mt-8 bg-gray-900 rounded-xl border border-gray-800 p-4">
+  <h3 className="text-lg font-bold mb-4 text-purple-400">💬 Team Chat</h3>
+  
+  {/* Messages */}
+  <div className="h-64 overflow-y-auto flex flex-col gap-2 mb-4 bg-gray-950 rounded-lg p-3">
+    {messages.length === 0 && (
+      <p className="text-gray-500 text-center mt-20">No messages yet. Say hello! 👋</p>
+    )}
+    {messages.map((msg, index) => (
+      <div key={index} className={`flex flex-col ${msg.sender === user.name ? 'items-end' : 'items-start'}`}>
+        <span className="text-xs text-gray-500 mb-1">{msg.sender} • {msg.time}</span>
+        <div className={`px-3 py-2 rounded-lg text-sm max-w-xs ${msg.sender === user.name ? 'bg-purple-600' : 'bg-gray-700'}`}>
+          {msg.text}
+        </div>
+      </div>
+    ))}
+    <div ref={messagesEndRef} />
+  </div>
+
+  {/* Input */}
+  <div className="flex gap-2">
+    <input
+      type="text"
+      placeholder="Type a message..."
+      value={newMessage}
+      onChange={(e) => setNewMessage(e.target.value)}
+      onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+      className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:border-purple-500"
+    />
+    <button
+      onClick={handleSendMessage}
+      className="px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-700 cursor-pointer text-sm"
+    >
+      Send
+    </button>
+  </div>
+</div>
+
       </div>
     </div>
   )
